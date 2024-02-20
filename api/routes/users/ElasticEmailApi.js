@@ -2,7 +2,7 @@ const axios = require("axios");
 const config = require("../../../config/server");
 
 const verificationEmailRequest = async (email, username, verificationToken) => {
-  const verificationUrl = `http://localhost:8080/api/v1/user/auth/verify/${verificationToken}`;
+  const verificationUrl = `https://spot-store-backend.onrender.com/api/v1/user/auth/verify/${verificationToken}`;
   const postData = {
     Recipients: [
       {
