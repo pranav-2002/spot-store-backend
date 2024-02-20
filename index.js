@@ -1,10 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const config = require("./config/server");
 const rootRouter = require("./api/routes/index");
 
 const app = express();
+
+// Cors
+app.use(cors());
 
 // For getting the JSON response
 app.use(express.json());
