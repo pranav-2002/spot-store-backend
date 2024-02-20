@@ -21,5 +21,10 @@ productRouter.delete(
   productController.deleteProduct
 );
 productRouter.get("/:productId", productController.getProductById);
+productRouter.patch(
+  "/sold",
+  authMiddleware,
+  productController.changeProductToSold
+);
 
 module.exports = productRouter;

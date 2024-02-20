@@ -204,4 +204,72 @@ const getProductsByUser = async (req, res) => {
   }
 };
 
-module.exports = { userSignUp, userVerify, userSignIn, getProductsByUser };
+// Get details of a particular user
+const getUserData = async (req, res) => {
+  const userId = req.userId;
+  try {
+    const userDetails = await User.findById(userId);
+    return res.status(200).json({
+      message: "Fetched User Details",
+      user: {
+        _id: userDetails._id,
+        email: userDetails.email,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        registrationNumber: userDetails.registrationNumber,
+        phoneNumber: userDetails.phoneNumber,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
+// Modify User Details
+const editUserData = async (req, res) => {
+  const editUserBody = z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    phoneNumber: z.string(),
+    password: z.string().optional(),
+  });
+
+  const { success } = editUserBody.safeParse(req.body);
+
+  if (!success) {
+    return throwError(res, "400", "Bad request (Incorrect Payload)");
+  }
+
+  const userId = req.userId;
+  const { firstName, lastName, phoneNumber, password } = req.body;
+
+  let hashedPassword = undefined;
+
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
+
+  try {
+    const modifiedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { firstName, lastName, phoneNumber, password: hashedPassword }
+    );
+    return res.status(200).json({
+      message: "Changed User Details Successfully",
+      userId: modifiedUser._id,
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
+module.exports = {
+  userSignUp,
+  userVerify,
+  userSignIn,
+  getProductsByUser,
+  getUserData,
+  editUserData,
+};

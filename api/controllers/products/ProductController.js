@@ -132,10 +132,39 @@ const getProductById = async (req, res) => {
   }
 };
 
+// Change Product to Sold
+const changeProductToSold = async (req, res) => {
+  const productSoldBody = z.object({
+    productId: z.string(),
+  });
+  const { success } = productSoldBody.safeParse(req.body);
+
+  if (!success) {
+    return throwError(res, 400, "Bad Request (Invalid Payload)");
+  }
+
+  const { productId } = req.body;
+
+  try {
+    const productSold = await Product.findOneAndUpdate(
+      { _id: productId },
+      { sold: true }
+    );
+    return res.status(200).json({
+      message: "Product updated to sold",
+      productId: productSold._id,
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
 module.exports = {
   getAllProducts,
   createProduct,
   updateProduct,
   deleteProduct,
   getProductById,
+  changeProductToSold,
 };
