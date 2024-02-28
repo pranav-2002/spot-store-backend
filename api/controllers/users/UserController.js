@@ -269,7 +269,7 @@ const editUserData = async (req, res) => {
 const getUserById = async (req, res) => {
   const id = req.params.id;
 
-  if (!id) {
+  if (!id || id === "undefined") {
     return throwError(res, "400", "Bad request (Incorrect Payload)");
   }
 
