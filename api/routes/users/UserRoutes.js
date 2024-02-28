@@ -11,5 +11,6 @@ userRouter.post("/auth/sign-in", userController.userSignIn);
 userRouter.get("/products", authMiddleware, userController.getProductsByUser);
 userRouter.get("/details", authMiddleware, userController.getUserData);
 userRouter.patch("/details/edit", authMiddleware, userController.editUserData);
+userRouter.get("/details/:id", userController.getUserById);
 
 module.exports = userRouter;

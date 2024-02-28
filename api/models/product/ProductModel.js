@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
 
+const validCategories = [
+  "electronics",
+  "bicycles",
+  "mattresses",
+  "books",
+  "fashion",
+  "fitness",
+];
+
 const ProductSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -32,10 +41,25 @@ const ProductSchema = new mongoose.Schema({
     ],
     required: true,
   },
+  category: [
+    {
+      type: String,
+      enum: validCategories,
+      required: true,
+    },
+  ],
+  location: {
+    type: String,
+    default: "VIT Vellore",
+  },
   sold: {
     type: Boolean,
     required: true,
     default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

@@ -265,6 +265,26 @@ const editUserData = async (req, res) => {
   }
 };
 
+// Get user details by id
+const getUserById = async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return throwError(res, "400", "Bad request (Incorrect Payload)");
+  }
+
+  try {
+    const user = await User.findById(id);
+    return res.status(200).json({
+      message: "Fetched user details",
+      user: user,
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
 module.exports = {
   userSignUp,
   userVerify,
@@ -272,4 +292,5 @@ module.exports = {
   getProductsByUser,
   getUserData,
   editUserData,
+  getUserById,
 };
