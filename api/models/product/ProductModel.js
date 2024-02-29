@@ -41,13 +41,11 @@ const ProductSchema = new mongoose.Schema({
     ],
     required: true,
   },
-  category: [
-    {
-      type: String,
-      enum: validCategories,
-      required: true,
-    },
-  ],
+  category: {
+    type: String,
+    required: true,
+    enum: validCategories,
+  },
   location: {
     type: String,
     default: "VIT Vellore",

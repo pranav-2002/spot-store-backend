@@ -40,7 +40,8 @@ const createProduct = async (req, res) => {
     return throwError(res, 400, "Bad Request (Invalid Payload)");
   }
 
-  const { title, description, price, primaryImage, images } = req.body;
+  const { title, description, price, primaryImage, images, category } =
+    req.body;
 
   try {
     const newProduct = await Product.create({
@@ -49,6 +50,7 @@ const createProduct = async (req, res) => {
       price,
       primaryImage,
       images,
+      category,
       owner_id: req.userId,
     });
     return res.status(200).json({
