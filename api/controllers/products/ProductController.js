@@ -113,6 +113,7 @@ const deleteProduct = async (req, res) => {
     const deletedProduct = await Product.deleteOne({ _id: productId });
     return res.status(200).json({
       message: "Product Deleted Successfully",
+      id: deletedProduct._id,
     });
   } catch (error) {
     return throwError(res, 500, "Internal Server Error");
@@ -162,6 +163,34 @@ const changeProductToSold = async (req, res) => {
   }
 };
 
+// Get Products by Category
+const getProductByCategory = async (req, res) => {
+  const validCategories = [
+    "electronics",
+    "bicycles",
+    "mattresses",
+    "books",
+    "fashion",
+    "fitness",
+  ];
+
+  const category = req.params.categoryName;
+
+  if (!category || !validCategories.includes(category)) {
+    return throwError(res, 400, "Bad Request");
+  }
+  try {
+    const products = await Product.find({ category });
+    return res.status(200).json({
+      message: `Fetched Products from ${category}`,
+      products: products,
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
 module.exports = {
   getAllProducts,
   createProduct,
@@ -169,4 +198,5 @@ module.exports = {
   deleteProduct,
   getProductById,
   changeProductToSold,
+  getProductByCategory,
 };

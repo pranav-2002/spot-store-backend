@@ -26,5 +26,9 @@ productRouter.patch(
   authMiddleware,
   productController.changeProductToSold
 );
+productRouter.get(
+  "/category/:categoryName",
+  productController.getProductByCategory
+);
 
 module.exports = productRouter;
