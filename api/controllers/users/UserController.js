@@ -120,6 +120,7 @@ const userVerify = async (req, res) => {
     return res.send(`
       <h2>Your Email has been verified</h2>
       <h5>Please Login Using the below link</h5>
+      <p> <a href="https://spot-store.netlify.app/login">Spot Store Login</a></p>
     `);
   } catch (error) {
     console.log(error);
