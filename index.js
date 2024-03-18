@@ -14,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 /* loading routes start. */
-app.get("/api/v1", (req, res) => {
-  return res.send("Spot Store API V1");
+app.get("/", (req, res) => {
+  return res.send("Spot Store API");
 });
 
 // Routes
