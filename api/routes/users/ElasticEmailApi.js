@@ -5,7 +5,7 @@ const verificationEmailRequest = async (email, username, verificationToken) => {
   const SES_CONFIG = {
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
-    region: "ap-south-1",
+    region: "eu-north-1",
   };
 
   const verificationUrl = `https://spot-store-backend.vercel.app/api/v1/user/auth/verify/${verificationToken}`;
