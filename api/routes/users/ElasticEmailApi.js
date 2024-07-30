@@ -3,12 +3,12 @@ const config = require("../../../config/server");
 
 const verificationEmailRequest = async (email, username, verificationToken) => {
   const SES_CONFIG = {
-    accessKeyId: "AKIA5FTZFMP54E6QSOTF",
-    secretAccessKey: "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",
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
     region: "ap-south-1",
   };
 
-  const verificationUrl = `https://spot-store-backend.onrender.com/api/v1/user/auth/verify/${verificationToken}`;
+  const verificationUrl = `https://spot-store-backend.vercel.app/api/v1/user/auth/verify/${verificationToken}`;
 
   try {
     const params = {

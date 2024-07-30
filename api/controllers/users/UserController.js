@@ -35,7 +35,7 @@ const userSignUp = async (req, res) => {
     registrationNumber,
   } = req.body;
 
-  // This variable is used to delete the record in case of any elastic email errors
+  // This variable is used to delete the record in case of any AWS SES email errors
   let userId = null;
 
   try {

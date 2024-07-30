@@ -10,9 +10,9 @@ const email = process.env.EMAIL_USERNAME;
 
 const password = process.env.EMAIL_PASSWORD;
 
-const elasticEmailApiKey = process.env.ELASTIC_EMAIL_API_KEY;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 
-const elasticEmailMailId = process.env.EMAIL_USERNAME;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 module.exports = {
   server_port,
@@ -20,6 +20,6 @@ module.exports = {
   jwt_password,
   email,
   password,
-  elasticEmailApiKey,
-  elasticEmailMailId,
+  accessKeyId,
+  secretAccessKey,
 };
