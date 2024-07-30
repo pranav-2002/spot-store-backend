@@ -286,6 +286,16 @@ const getUserById = async (req, res) => {
   }
 };
 
+// Forgot Password
+const forgotPassword = (req, res) => {
+  const forgotPasswordBody = z.object({
+    email: z.string(),
+  });
+
+  try {
+  } catch (error) {}
+};
+
 module.exports = {
   userSignUp,
   userVerify,
