@@ -323,7 +323,7 @@ const forgotPasswordRequest = async (req, res) => {
         email: email,
       },
       config.jwt_password,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
 
     const passwordResetMail = await ForgotPasswordLink(
