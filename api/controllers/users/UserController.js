@@ -3,7 +3,7 @@ const User = require("../../models/users/UserModel");
 const z = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const verificationEmailRequest = require("../../routes/users/ElasticEmailApi");
+const verificationEmailRequest = require("../../routes/users/SendMail");
 const Product = require("../../models/product/ProductModel");
 const { throwError } = require("../../middleware/errors/errorhandler");
 
@@ -79,11 +79,18 @@ const userSignUp = async (req, res) => {
     );
     // Email Verification end
 
-    return res.status(200).json({
-      message: "Sign Up Successful. Please verify your email",
-      userId: newUser._id,
-      email: newUser.email,
-    });
+    if (emailRequest) {
+      return res.status(200).json({
+        message: "Sign Up Successful. Please verify your email",
+        userId: newUser._id,
+        email: newUser.email,
+      });
+    } else {
+      await User.deleteOne({ id: userId });
+      return res.status(500).json({
+        message: "Internal Server Error (AWS SES)",
+      });
+    }
   } catch (error) {
     console.log(error);
     await User.deleteOne({ _id: userId });

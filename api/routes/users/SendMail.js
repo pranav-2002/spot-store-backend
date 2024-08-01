@@ -1,4 +1,4 @@
-const aws = require("aws");
+const aws = require("aws-sdk");
 const config = require("../../../config/server");
 
 const verificationEmailRequest = async (email, username, verificationToken) => {
@@ -10,41 +10,37 @@ const verificationEmailRequest = async (email, username, verificationToken) => {
 
   const verificationUrl = `https://spot-store-backend.vercel.app/api/v1/user/auth/verify/${verificationToken}`;
 
-  try {
-    const params = {
-      Destination: {
+  const params = {
+    Destination: {
+      /* required */
+      ToAddresses: [
+        email,
+        /* more items */
+      ],
+    },
+    Message: {
+      /* required */
+      Body: {
         /* required */
-        ToAddresses: [
-          email,
-          /* more items */
-        ],
-      },
-      Message: {
-        /* required */
-        Body: {
-          /* required */
-          Html: {
-            Charset: "UTF-8",
-            Data: `
+        Html: {
+          Charset: "UTF-8",
+          Data: `
                 <h5>Hello ${username}, welcome to Spot Store</h5>
                 <h6>Please click on the below url to verify your email</h6>
                 <p><a href='${verificationUrl}'>verify your account</a></p>
             `,
-          },
-        },
-        Subject: {
-          Charset: "UTF-8",
-          Data: "Verify your Spot Store Account",
         },
       },
-      Source: config.email /* required */,
-    };
+      Subject: {
+        Charset: "UTF-8",
+        Data: "Verify your Spot Store Account",
+      },
+    },
+    Source: config.email /* required */,
+  };
 
-    const mailRequest = new aws.SES(SES_CONFIG).sendMail(params).promise();
-    return mailRequest;
-  } catch (error) {
-    return error;
-  }
+  const mailRequest = new aws.SES(SES_CONFIG).sendEmail(params).promise();
+  return mailRequest;
 };
 
 module.exports = verificationEmailRequest;
