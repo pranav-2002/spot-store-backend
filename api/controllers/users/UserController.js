@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const verificationEmailRequest = require("../../routes/users/SendMail");
 const Product = require("../../models/product/ProductModel");
 const { throwError } = require("../../middleware/errors/errorhandler");
+const ForgotPasswordLink = require("../../routes/users/ForgotPasswordMail");
 
 // New User Registration
 const userSignUp = async (req, res) => {
@@ -293,14 +294,122 @@ const getUserById = async (req, res) => {
   }
 };
 
-// Forgot Password
-const forgotPassword = (req, res) => {
+// Forgot Password Link Request
+const forgotPasswordRequest = async (req, res) => {
   const forgotPasswordBody = z.object({
     email: z.string(),
   });
 
+  const { success } = forgotPasswordBody.safeParse(req.body);
+
+  if (!success) {
+    return throwError(res, "400", "Bad request (Incorrect Payload)");
+  }
+
+  const { email } = req.body;
+
   try {
-  } catch (error) {}
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(510).json({
+        message: "This email id has not been registered",
+      });
+    }
+
+    const verificationToken = jwt.sign(
+      {
+        userId: user._id,
+        email: email,
+      },
+      config.jwt_password,
+      { expiresIn: "7d" }
+    );
+
+    const passwordResetMail = await ForgotPasswordLink(
+      email,
+      user.firstName,
+      verificationToken
+    );
+
+    if (passwordResetMail) {
+      return res.status(200).json({
+        message: "Password reset link has been sent to your email address",
+      });
+    } else {
+      return throwError(res, 500, "Internal Server Error (AWS SES)");
+    }
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
+// Forgot Password Link Verification
+const verifyPasswordLink = async (req, res) => {
+  const verifyPasswordLinkBody = z.object({
+    verificationToken: z.string(),
+  });
+
+  const { success } = verifyPasswordLinkBody.safeParse(req.body);
+
+  if (!success) {
+    return res.status(422).json({
+      message: "Token is missing",
+    });
+  }
+
+  const { verificationToken } = req.body;
+
+  try {
+    const payload = jwt.verify(verificationToken, config.jwt_password);
+
+    if (!payload) {
+      return res.status(500).json({
+        message: "Invalid JWT Token",
+      });
+    }
+
+    return res.status(200).json({
+      message: "User Verified Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
+};
+
+// Change User Password
+const changeUserPassword = async (req, res) => {
+  const changePasswordBody = z.object({
+    password: z.string(),
+    verificationToken: z.string(),
+  });
+
+  const { success } = changePasswordBody.safeParse(req.body);
+
+  if (!success) {
+    return throwError(res, "400", "Bad request (Invalid Payload)");
+  }
+
+  const { password, verificationToken } = req.body;
+
+  const payload = jwt.verify(verificationToken, config.jwt_password);
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const updatedUserPassword = await User.findByIdAndUpdate(payload.userId, {
+      password: hashedPassword,
+    });
+
+    return res.status(200).json({
+      message: "Password Updated Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return throwError(res, 500, "Internal Server Error");
+  }
 };
 
 module.exports = {
@@ -311,4 +420,7 @@ module.exports = {
   getUserData,
   editUserData,
   getUserById,
+  forgotPasswordRequest,
+  verifyPasswordLink,
+  changeUserPassword,
 };
